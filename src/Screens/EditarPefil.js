@@ -89,5 +89,5 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         textDecorationColor: '#000',
         fontSize: 16
-    }
+    },
 });
