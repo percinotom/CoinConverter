@@ -1,6 +1,41 @@
 import { Text, TextInput, Button, View, StyleSheet, Touchable, TouchableOpacity } from "react-native";
+import React, { useState } from 'react';
 
-export default props => {
+export default function LoginScreen({ navigation }) {
+    const [login, setLogin] = useState('');
+    const [senha, setSenha] = useState('');
+
+    const handleLogin = () => {
+        // Construa o objeto de dados a ser enviado para a API PHP
+        const data = {
+            login: login,
+            senha: senha,
+        };
+
+        // Enviar os dados para a API PHP (substitua pela URL correta da sua API)
+        fetch('https://apicoinconverter.000webhostapp.com/api_CoinConverter/Login/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((responseData) => {
+                if (responseData.success) {
+                    alert('Login bem-sucedido!');
+                    // Redirecione para a tela desejada após o login
+                    navigation.navigate('Tabs'); // ou a tela que você desejar
+                } else {
+                    alert('Erro ao fazer login: ' + responseData.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao fazer login:', error);
+                alert('Erro ao fazer login. Tente novamente.');
+            });
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.posicaoTextoLogo}>
@@ -11,25 +46,23 @@ export default props => {
                     <Text style={styles.texto}>Login</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(text) => setExpressao(text)}
+                        onChangeText={(text) => setLogin(text)}
                         placeholder="Digite o login" />
                 </View>
                 <View>
                     <Text style={styles.texto}>Senha</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={(text) => setExpressao(text)}
+                        onChangeText={(text) => setSenha(text)}
                         placeholder="Digite a senha" />
                 </View>
                 <TouchableOpacity
                     style={styles.posicaoRegistrar}
-                    onPress={() => { props.navigation.navigate('Cadastro') }}>
+                    onPress={() => { navigation.navigate('Cadastro'); }}>
                     <Text style={styles.registrar}>Registrar-se</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity
-                style={styles.btnEntrar}
-                onPress={() => { props.navigation.navigate('Tabs') }}>
+            <TouchableOpacity style={styles.btnEntrar} onPress={handleLogin}>
                 <Text style={styles.btnTextoBotao}>Entrar</Text>
             </TouchableOpacity>
         </View>
