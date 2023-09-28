@@ -6,13 +6,11 @@ export default function LoginScreen({ navigation }) {
     const [senha, setSenha] = useState('');
 
     const handleLogin = () => {
-        // Construa o objeto de dados a ser enviado para a API PHP
         const data = {
             login: login,
             senha: senha,
         };
 
-        // Enviar os dados para a API PHP (substitua pela URL correta da sua API)
         fetch('https://apicoinconverter.000webhostapp.com/api_CoinConverter/Login/login.php', {
             method: 'POST',
             headers: {
@@ -24,8 +22,7 @@ export default function LoginScreen({ navigation }) {
             .then((responseData) => {
                 if (responseData.success) {
                     alert('Login bem-sucedido!');
-                    // Redirecione para a tela desejada após o login
-                    navigation.navigate('Tabs'); // ou a tela que você desejar
+                    navigation.navigate('Tabs');
                 } else {
                     alert('Erro ao fazer login: ' + responseData.message);
                 }
@@ -53,6 +50,7 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.texto}>Senha</Text>
                     <TextInput
                         style={styles.input}
+                        secureTextEntry={true}
                         onChangeText={(text) => setSenha(text)}
                         placeholder="Digite a senha" />
                 </View>
@@ -62,7 +60,7 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.registrar}>Registrar-se</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.btnEntrar} onPress={handleLogin}>
+        <TouchableOpacity style={styles.btnEntrar} onPress={() => { navigation.navigate('Tabs'); }}>
                 <Text style={styles.btnTextoBotao}>Entrar</Text>
             </TouchableOpacity>
         </View>

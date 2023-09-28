@@ -10,70 +10,25 @@ export default function FavoritosScreen() {
       data: '08/09/2023',
     },
     {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-      {
-        expressao: '4 USD = 19.94 BRL',
-        data: '08/09/2023',
-      },
-    // Adicione mais favoritos aqui conforme necessário
+      expressao: '4 USD = 19.94 BRL',
+      data: '08/09/2023',
+    },
+    {
+      expressao: '4 USD = 19.94 BRL',
+      data: '08/09/2023',
+    },
+    {
+      expressao: '4 USD = 19.94 BRL',
+      data: '08/09/2023',
+    },
+    {
+      expressao: '4 USD = 19.94 BRL',
+      data: '08/09/2023',
+    },
+    {
+      expressao: '4 USD = 19.94 BRL',
+      data: '08/09/2023',
+    },
   ]);
 
   const handleDeleteFavorito = (index) => {

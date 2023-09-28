@@ -48,7 +48,7 @@ const Tabs = () => {
                 </nav.Screen>
                 <nav.Screen name="TelaFavoritos" component={TelaFavoritos}
                     options={{
-                        tabBarLabel: 'TelaFavoritos',
+                        tabBarLabel: 'Favoritos',
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name="book" color={color} size={size} />
                         ),
@@ -58,7 +58,7 @@ const Tabs = () => {
                     options={{
                         tabBarLabel: 'Editar Pefil',
                         tabBarIcon: ({ color, size }) => (
-                            <MaterialCommunityIcons name="chat" color={color} size={size} />
+                            <MaterialCommunityIcons name="cog" color={color} size={size} />
                         ),
                     }}>
                 </nav.Screen>

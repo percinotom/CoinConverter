@@ -7,14 +7,12 @@ export default function RegistroScreen({ navigation }) {
     const [senha, setSenha] = useState('');
 
     const handleRegistro = () => {
-        // Construa o objeto de dados a ser enviado para a API PHP
         const data = {
             nome: nome,
             login: login,
             senha: senha,
         };
 
-        // Enviar os dados para a API PHP (substitua pela URL correta da sua API)
         fetch('https://apicoinconverter.000webhostapp.com/api_CoinConverter/registrar/registrar_post.php', {
             method: 'POST',
             headers: {
@@ -24,10 +22,8 @@ export default function RegistroScreen({ navigation }) {
         })
             .then((response) => response.json())
             .then((responseData) => {
-                // Verifique a resposta da API e trate de acordo
                 if (responseData.success) {
                     alert('Registro bem-sucedido!');
-                    // Redirecione para a tela de login ou ação desejada após o registro
                     navigation.navigate('Login');
                 } else {
                     alert('Erro ao registrar. Tente novamente.');
