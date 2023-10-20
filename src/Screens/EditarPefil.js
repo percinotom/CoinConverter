@@ -1,6 +1,19 @@
 import { Text, TextInput, Button, View, StyleSheet, Touchable, TouchableOpacity } from "react-native";
+import { UseUser } from "../Context/UserContext";
 
 export default props => {
+    const { user, setUser } = UseUser();
+
+    const alterar = () => {
+        setUser({
+            id: 0,
+            nome: user.nome,
+            login: user.login,
+            senha: user.senha,
+            logado: false
+        })
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.posicaoTextoLogo}>
@@ -12,21 +25,21 @@ export default props => {
                     <TextInput
                         style={styles.input}
                         onChangeText={(text) => setExpressao(text)}
-                        placeholder="Digite o nome" />
+                        placeholder="Digite o nome" >{user.nome}</TextInput>
                 </View>
                 <View>
                     <Text style={styles.texto}>Login</Text>
                     <TextInput
                         style={styles.input}
                         onChangeText={(text) => setExpressao(text)}
-                        placeholder="Digite o login" />
+                        placeholder="Digite o login" >{user.login}</TextInput>
                 </View>
                 <View>
                     <Text style={styles.texto}>Senha</Text>
                     <TextInput
                         style={styles.input}
                         onChangeText={(text) => setExpressao(text)}
-                        placeholder="Digite a senha" />
+                        placeholder="Digite a senha" >{user.senha}</TextInput>
                 </View>
             </View>
             <TouchableOpacity

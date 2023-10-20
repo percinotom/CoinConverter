@@ -13,7 +13,7 @@ export default function RegistroScreen({ navigation }) {
             senha: senha,
         };
 
-        fetch('https://apicoinconverter.000webhostapp.com/api_CoinConverter/registrar/registrar_post.php', {
+        fetch('http://coinconverter1.hospedagemdesites.ws/api_CoinConverter/registrar/registrar_post.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

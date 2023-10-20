@@ -1,9 +1,11 @@
 import { Text, TextInput, Button, View, StyleSheet, Touchable, TouchableOpacity } from "react-native";
 import React, { useState } from 'react';
+import { UseUser } from "../Context/UserContext";
 
 export default function LoginScreen({ navigation }) {
     const [login, setLogin] = useState('');
     const [senha, setSenha] = useState('');
+    const { user, setUser } = UseUser();
 
     const handleLogin = () => {
         const data = {
@@ -11,20 +13,29 @@ export default function LoginScreen({ navigation }) {
             senha: senha,
         };
 
-        fetch('https://apicoinconverter.000webhostapp.com/api_CoinConverter/Login/login.php', {
+        setUser({
+            id: 10,
+            nome: nome,
+            login: login,
+            senha: senha,
+            logado: false
+        })
+
+        fetch('http://coinconverter1.hospedagemdesites.ws/api_CoinConverter/Login/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         })
+
             .then((response) => response.json())
             .then((responseData) => {
                 if (responseData.success) {
                     alert('Login bem-sucedido!');
                     navigation.navigate('Tabs');
                 } else {
-                    alert('Erro ao fazer login: ' + responseData.message);
+                    alert('Erro ao fazer login: ' + responseData.message + JSON.stringify(data));
                 }
             })
             .catch((error) => {
@@ -60,7 +71,7 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.registrar}>Registrar-se</Text>
                 </TouchableOpacity>
             </View>
-        <TouchableOpacity style={styles.btnEntrar} onPress={() => { navigation.navigate('Tabs'); }}>
+            <TouchableOpacity style={styles.btnEntrar} onPress={handleLogin}>
                 <Text style={styles.btnTextoBotao}>Entrar</Text>
             </TouchableOpacity>
         </View>
