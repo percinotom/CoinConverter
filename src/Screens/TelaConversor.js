@@ -1,26 +1,82 @@
 import React, { useState, useRef } from 'react';
-import { Text, TextInput, Button, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Modal, Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import { Table, Row, Rows } from 'react-native-table-component';
+import { UseUser } from '../Context/UserContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default props => {
+export default function TelaConversor(props) {
+    const { user } = UseUser();
+    const navigation = useNavigation();
+    const [favoritos, setFavoritos] = useState([]);
     const [expressao, setExpressao] = useState('');
     const [moedaOrigem, setMoedaOrigem] = useState('USD');
     const [moedaDestino, setMoedaDestino] = useState('BRL');
     const [resultado, setResultado] = useState('-');
     const expressaoInputRef = useRef(null);
+    const [nome, setNome] = useState(user.nome);
+    const [mostrarMensagem, setMostrarMensagem] = useState('');
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = (mensagem) => {
+        setMostrarMensagem(mensagem);
+        setModalVisible(!isModalVisible);
+    };
+
+    const fetchFavoritos = async () => {
+        try {
+            const response = await fetch(`http://coinconverter1.hospedagemdesites.ws/api_CoinConverter/favoritos/favoritos_get.php?user_id=${user.id}`);
+            const data = await response.json();
+            setFavoritos(data);
+            return data;
+        } catch (error) {
+            toggleModal('Erro ao carregar favoritos.');
+        }
+    };
+
+    const isResultadoValido = resultado !== '-' && resultado !== 'Erro ao calcular a conversão';
+
+    const handleFavoritar = () => {
+        if (isResultadoValido) {
+            const favorito = {
+                favorito: resultado,
+                usuario_id: user.id,
+            };
+
+            fetch('http://coinconverter1.hospedagemdesites.ws/api_CoinConverter/favoritos/favoritos_post.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(favorito),
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        fetchFavoritos().then((novosFavoritos) => {
+                            navigation.navigate('TelaFavoritos', { novosFavoritos });
+                        });
+                    } else {
+                        toggleModal('Erro ao favoritar. ' + response.status);
+                    }
+                })
+                .catch((error) => {
+                    toggleModal('Erro ao favoritar. ', error);
+                });
+        } else {
+            toggleModal('Resultado inválido. Não é possível favoritar.');
+        }
+    };
 
     const calcularConversao = async () => {
         try {
             const response = await fetch(`https://economia.awesomeapi.com.br/json/last/${moedaOrigem}-${moedaDestino}`);
             const data = await response.json();
-            
+
             const taxaDeCambio = data[`${moedaOrigem}${moedaDestino}`].bid;
 
             const valorConvertido = parseFloat(expressao) * parseFloat(taxaDeCambio);
             setResultado(`${expressao} ${moedaOrigem} = ${valorConvertido.toFixed(2)} ${moedaDestino}`);
         } catch (error) {
-            console.error('Erro ao calcular a conversão:', error);
             setResultado('Erro ao calcular a conversão');
         }
     };
@@ -30,78 +86,106 @@ export default props => {
 
     return (
         <View style={styles.container}>
-            <View>
-                <View>
-                    <Text style={styles.texto}>Valor a converter</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(text) => setExpressao(text)}
-                        placeholder="Digite o valor"
-                        ref={expressaoInputRef}
-                    />
-                </View>
-                <View>
-                    <Text style={styles.texto}>Moeda para conversão</Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={moedaOrigem}
-                            onValueChange={(itemValue) => setMoedaOrigem(itemValue)}>
-                            <Picker label="Dólar Americano" value="USD" />
-                            <Picker label="Euro" value="EUR" />
-                            <Picker label="Dólar Canadense" value="CAD" />
-                            <Picker label="Real Brasileiro" value="BRL" />
-                            <Picker label="Peso Argentino" value="ARS" />
-                            <Picker label="Bitcoin" value="BTC" />
-                            <Picker label="Iene Japonês" value="JPY" />
-                        </Picker>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer} keyboardShouldPersistTaps="handled">
+                <View style={styles.container2}>
+                    <View>
+                        <View>
+                            <Text style={styles.textoBemVindo} >Olá {user.nome}, bem vindo!</Text>
+                        </View>
+                        <Text style={styles.texto} >Valor a converter</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={(text) => setExpressao(text)}
+                            placeholder="Digite o valor"
+                            ref={expressaoInputRef}
+                            keyboardType='numeric'
+                        />
+                    </View>
+                    <View>
+                        <Text style={styles.texto}>Moeda para conversão</Text>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={moedaOrigem}
+                                onValueChange={(itemValue) => setMoedaOrigem(itemValue)}>
+                                <Picker label="Dólar Americano" value="USD" />
+                                <Picker label="Euro" value="EUR" />
+                                <Picker label="Dólar Canadense" value="CAD" />
+                                <Picker label="Real Brasileiro" value="BRL" />
+                                <Picker label="Peso Argentino" value="ARS" />
+                                <Picker label="Bitcoin" value="BTC" />
+                                <Picker label="Iene Japonês" value="JPY" />
+                            </Picker>
+                        </View>
+                    </View>
+                    <View>
+                        <Text style={styles.texto}>Moeda a ser convertida</Text>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={moedaDestino}
+                                onValueChange={(itemValue) => setMoedaDestino(itemValue)}>
+                                <Picker label="Dólar Americano" value="USD" />
+                                <Picker label="Euro" value="EUR" />
+                                <Picker label="Dólar Canadense" value="CAD" />
+                                <Picker label="Real Brasileiro" value="BRL" />
+                                <Picker label="Peso Argentino" value="ARS" />
+                                <Picker label="Iene Japonês" value="JPY" />
+                            </Picker>
+                        </View>
+                    </View>
+                    <View style={styles.centralizaBotoes}>
+                        <TouchableOpacity
+                            style={styles.btnLimpar}
+                            onPress={() => {
+                                setExpressao('');
+                                setMoedaOrigem('USD');
+                                setMoedaDestino('BRL');
+                                setResultado('-');
+                                expressaoInputRef.current.clear();
+                            }}>
+                            <Text style={styles.btnTextoBotao}>Limpar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.btnCalcular}
+                            onPress={calcularConversao}>
+                            <Text style={styles.btnTextoBotao}>Calcular</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Table borderStyle={{ borderWidth: 1, borderColor: '#000' }}>
+                        <Row data={tableHead} style={styles.head} textStyle={styles.headText} />
+                        <Rows data={tableData} textStyle={styles.text} />
+                    </Table>
+                    <View style={styles.favoritarContainer}>
+                        <TouchableOpacity
+                            style={[styles.btnFavoritar, !isResultadoValido && styles.btnFavoritarDisabled]}
+                            onPress={handleFavoritar}
+                            disabled={!isResultadoValido}>
+                            <Text style={styles.btnTextoBotao}>Favoritar</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <View>
-                    <Text style={styles.texto}>Moeda a ser convertida</Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={moedaDestino}
-                            onValueChange={(itemValue) => setMoedaDestino(itemValue)}>
-                            <Picker label="Dólar Americano" value="USD" />
-                            <Picker label="Euro" value="EUR" />
-                            <Picker label="Dólar Canadense" value="CAD" />
-                            <Picker label="Real Brasileiro" value="BRL" />
-                            <Picker label="Peso Argentino" value="ARS" />
-                            <Picker label="Iene Japonês" value="JPY" />
-                        </Picker>
+
+                {isModalVisible && (
+                    <View style={styles.overlay}>
+                        <Modal
+                            visible={isModalVisible}
+                            transparent={true}
+                            animationType="slide"
+                        >
+                            <View style={styles.card}>
+                                <View style={styles.itensCard}>
+                                    <Text style={styles.texto}>{mostrarMensagem}</Text>
+                                    <View style={styles.centralizaBotoes}>
+                                        <TouchableOpacity style={styles.btnVoltar} onPress={toggleModal}>
+                                            <Text style={styles.btnTextoBotao}>OK</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
                     </View>
-                </View>
-                <View style={styles.centralizaBotoes}>
-                    <TouchableOpacity
-                        style={styles.btnLimpar}
-                        onPress={() => {
-                            setExpressao('');
-                            setMoedaOrigem('USD');
-                            setMoedaDestino('BRL');
-                            setResultado('-');
-                            expressaoInputRef.current.clear();
-                        }}>
-                        <Text style={styles.btnTextoBotao}>Limpar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.btnCalcular}
-                        onPress={calcularConversao}>
-                        <Text style={styles.btnTextoBotao}>Calcular</Text>
-                    </TouchableOpacity>
-                </View>
-                <Table borderStyle={{ borderWidth: 1, borderColor: '#000' }}>
-                    <Row data={tableHead} style={styles.head} textStyle={styles.headText} />
-                    <Rows data={tableData} textStyle={styles.text} />
-                </Table>
-                <View style={styles.favoritarContainer}>
-                    <TouchableOpacity
-                        style={styles.btnFavoritar}
-                        onPress={calcularConversao}>
-                        <Text style={styles.btnTextoBotao}>Favoritar</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View >
+                )}
+            </ScrollView>
+        </View>
     );
 };
 
@@ -111,6 +195,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    container2: {
+        paddingHorizontal: 50,
+    },
+    scrollViewContainer: {
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 100,
+    },
+    btnFavoritarDisabled: {
+        backgroundColor: '#ccc',
     },
     picker: {
         width: 320,
@@ -145,6 +241,12 @@ const styles = StyleSheet.create({
     texto: {
         fontSize: 18,
     },
+    textoBemVindo: {
+        fontSize: 30,
+        color: '#17A600',
+        fontWeight: 'bold',
+        marginBottom: 50,
+    },
     btnCalcular: {
         backgroundColor: '#17A600',
         borderRadius: 5,
@@ -167,7 +269,6 @@ const styles = StyleSheet.create({
     head: {
         height: 40,
         backgroundColor: '#17A600',
-
     },
     headText: {
         textAlign: 'center',
@@ -190,5 +291,9 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 25,
         marginTop: 10,
-    }
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
 });

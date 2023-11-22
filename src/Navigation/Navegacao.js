@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { UseUser } from '../Context/UserContext';
 
 import Login from "../Screens/Login";
 import Cadastro from "../Screens/Cadastro";
@@ -13,7 +14,7 @@ import EditarPefil from "../Screens/EditarPefil";
 
 const Tabs = () => {
     const navigation = useNavigation();
-
+    const { logout } = UseUser();
     const nav = createBottomTabNavigator();
     const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
 
@@ -22,6 +23,7 @@ const Tabs = () => {
     };
 
     const handleLogout = () => {
+        logout();
         navigation.navigate('Login');
         toggleLogoutModal();
     };
@@ -80,25 +82,29 @@ const Tabs = () => {
                 />
             </nav.Navigator>
 
-            <Modal
-                visible={isLogoutModalVisible}
-                transparent={true}
-                animationType="slide"
-            >
-                <View style={styles.card}>
-                    <View style={styles.itensCard}>
-                        <Text style={styles.texto}>Deseja realmente sair do app?</Text>
-                        <View style={styles.centralizaBotoes}>
-                            <TouchableOpacity style={styles.btnVoltar} onPress={toggleLogoutModal}>
-                                <Text style={styles.btnTextoBotao}>Voltar</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.btnSair} onPress={handleLogout}>
-                                <Text style={styles.btnTextoBotao}>Sair</Text>
-                            </TouchableOpacity>
+            {isLogoutModalVisible && (
+                <View style={styles.overlay}>
+                    <Modal
+                        visible={isLogoutModalVisible}
+                        transparent={true}
+                        animationType="slide"
+                    >
+                        <View style={styles.card}>
+                            <View style={styles.itensCard}>
+                                <Text style={styles.texto}>Deseja realmente sair do app?</Text>
+                                <View style={styles.centralizaBotoes}>
+                                    <TouchableOpacity style={styles.btnVoltar} onPress={toggleLogoutModal}>
+                                        <Text style={styles.btnTextoBotao}>Voltar</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.btnSair} onPress={handleLogout}>
+                                        <Text style={styles.btnTextoBotao}>Sair</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
-                    </View>
+                    </Modal>
                 </View>
-            </Modal>
+            )}
         </>
     )
 }
@@ -171,5 +177,9 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         textDecorationColor: '#000',
         fontSize: 16
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 })

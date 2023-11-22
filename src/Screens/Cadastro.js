@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Modal, Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 export default function RegistroScreen({ navigation }) {
     const [nome, setNome] = useState('');
     const [login, setLogin] = useState('');
     const [senha, setSenha] = useState('');
+    const [mostrarMensagem, setMostrarMensagem] = useState('');
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = (mensagem) => {
+        setMostrarMensagem(mensagem);
+        setModalVisible(!isModalVisible);
+    };
 
     const handleRegistro = () => {
         const data = {
@@ -23,51 +30,77 @@ export default function RegistroScreen({ navigation }) {
             .then((response) => response.json())
             .then((responseData) => {
                 if (responseData.success) {
-                    alert('Registro bem-sucedido!');
-                    navigation.navigate('Login');
+                    toggleModal('Registro bem-sucedido!');
+                    setTimeout(() => {
+                        navigation.navigate('Login');
+                    }, 2000);
                 } else {
-                    alert('Erro ao registrar. Tente novamente.');
+                    toggleModal('Erro ao registrar. Tente novamente.');
                 }
             })
             .catch((error) => {
-                console.error('Erro ao registrar:', error);
-                alert('Erro ao registrar. Tente novamente.');
+                toggleModal('Erro ao registrar. Tente novamente.');
             });
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.textoLogo}>CoinConverter</Text>
-            <View>
-                <View>
-                    <Text style={styles.texto}>Nome</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(text) => setNome(text)}
-                        placeholder="Digite o nome"
-                    />
+            <ScrollView contentContainerStyle={styles.scrollViewContainer} keyboardShouldPersistTaps="handled">
+                <View style={styles.container2}>
+                    <Text style={styles.textoLogo}>CoinConverter</Text>
+                    <View>
+                        <View>
+                            <Text style={styles.texto}>Nome</Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(text) => setNome(text)}
+                                placeholder="Digite o nome"
+                            />
+                        </View>
+                        <View>
+                            <Text style={styles.texto}>Login</Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(text) => setLogin(text)}
+                                placeholder="Digite o login"
+                            />
+                        </View>
+                        <View>
+                            <Text style={styles.texto}>Senha</Text>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={(text) => setSenha(text)}
+                                placeholder="Digite a senha"
+                                secureTextEntry
+                            />
+                        </View>
+                    </View>
+                    <TouchableOpacity style={styles.btnRegistrar} onPress={handleRegistro}>
+                        <Text style={styles.btnTextoBotao}>Registrar-se</Text>
+                    </TouchableOpacity>
                 </View>
-                <View>
-                    <Text style={styles.texto}>Login</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(text) => setLogin(text)}
-                        placeholder="Digite o login"
-                    />
-                </View>
-                <View>
-                    <Text style={styles.texto}>Senha</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(text) => setSenha(text)}
-                        placeholder="Digite a senha"
-                        secureTextEntry
-                    />
-                </View>
-            </View>
-            <TouchableOpacity style={styles.btnRegistrar} onPress={handleRegistro}>
-                <Text style={styles.btnTextoBotao}>Registrar-se</Text>
-            </TouchableOpacity>
+
+                {isModalVisible && (
+                    <View style={styles.overlay}>
+                        <Modal
+                            visible={isModalVisible}
+                            transparent={true}
+                            animationType="slide"
+                        >
+                            <View style={styles.card}>
+                                <View style={styles.itensCard}>
+                                    <Text style={styles.texto}>{mostrarMensagem}</Text>
+                                    <View style={styles.centralizaBotoes}>
+                                        <TouchableOpacity style={styles.btnVoltar} onPress={toggleModal}>
+                                            <Text style={styles.btnTextoBotao}>OK</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+                )}
+            </ScrollView>
         </View>
     );
 }
@@ -79,11 +112,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    container2: {
+        paddingHorizontal: 50,
+    },
+    scrollViewContainer: {
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 100,
+    },
     textoLogo: {
         fontSize: 55,
         fontWeight: 'bold',
         color: '#17A600',
         marginBottom: 80,
+        textAlign: 'center',
     },
     input: {
         width: 320,
@@ -102,11 +145,44 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: 320,
         padding: 12,
+        marginTop: 30,
     },
     btnTextoBotao: {
         textAlign: 'center',
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    card: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    itensCard: {
+        backgroundColor: 'white',
+        padding: 30,
+        borderRadius: 10,
+        borderColor: '#000',
+        borderWidth: 1
+    },
+    texto: {
+        fontSize: 22,
+    },
+    btnVoltar: {
+        backgroundColor: '#17A600',
+        borderRadius: 5,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 25,
+        paddingRight: 25,
+        marginTop: 10,
+    },
+    centralizaBotoes: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 });
