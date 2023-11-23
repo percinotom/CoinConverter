@@ -34,7 +34,7 @@ export default function TelaConversor(props) {
         }
     };
 
-    const isResultadoValido = resultado !== '-' && resultado !== 'Erro ao calcular a conversão';
+    const isResultadoValido = resultado !== '-' && resultado !== 'Erro ao calcular a conversão' && !isNaN(parseFloat(resultado));
 
     const handleFavoritar = () => {
         if (isResultadoValido) {
@@ -132,7 +132,7 @@ export default function TelaConversor(props) {
                             </Picker>
                         </View>
                     </View>
-                    <View style={styles.centralizaBotoes}>
+                    <View style={styles.centralizaBotoesMoeda}>
                         <TouchableOpacity
                             style={styles.btnLimpar}
                             onPress={() => {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
         marginVertical: 13,
         borderRadius: 5
     },
-    centralizaBotoes: {
+    centralizaBotoesMoeda: {
         marginTop: 5,
         marginBottom: 30,
         flexDirection: 'row',
@@ -291,6 +291,35 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 25,
         marginTop: 10,
+    },
+    card: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    itensCard: {
+        backgroundColor: 'white',
+        paddingVertical: 30,
+        paddingHorizontal: 15,
+        borderRadius: 10,
+        borderColor: '#000',
+        borderWidth: 1
+    },
+    texto: {
+        fontSize: 22,
+    },
+    btnVoltar: {
+        backgroundColor: '#17A600',
+        borderRadius: 5,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 25,
+        paddingRight: 25,
+        marginTop: 10,
+    },
+    centralizaBotoes: {
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,

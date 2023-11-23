@@ -13,7 +13,40 @@ export default function RegistroScreen({ navigation }) {
         setModalVisible(!isModalVisible);
     };
 
+    const validarCampos = () => {
+        if (!nome || !login || !senha) {
+            toggleModal('Todos os campos são obrigatórios.');
+            return false;
+        }
+
+        if (!/^[a-zA-Z]+$/.test(nome)) {
+            toggleModal('O campo de nome deve conter apenas letras.');
+            return false;
+        }
+
+        if (nome.length < 3 || nome.length > 50) {
+            toggleModal('O nome deve ter entre 3 e 50 caracteres.');
+            return false;
+        }
+
+        if (login.length < 3 || login.length > 30) {
+            toggleModal('O login deve ter entre 3 e 30 caracteres.');
+            return false;
+        }
+
+        if (senha.length < 3 || senha.length > 30) {
+            toggleModal('A senha deve ter entre 3 e 30 caracteres.');
+            return false;
+        }
+
+        return true;
+    };
+
     const handleRegistro = () => {
+        if (!validarCampos()) {
+            return;
+        }
+
         const data = {
             nome: nome,
             login: login,
@@ -35,7 +68,7 @@ export default function RegistroScreen({ navigation }) {
                         navigation.navigate('Login');
                     }, 2000);
                 } else {
-                    toggleModal('Erro ao registrar. Tente novamente.');
+                    toggleModal(responseData.message || 'Erro ao registrar. Tente novamente.');
                 }
             })
             .catch((error) => {
@@ -55,6 +88,7 @@ export default function RegistroScreen({ navigation }) {
                                 style={styles.input}
                                 onChangeText={(text) => setNome(text)}
                                 placeholder="Digite o nome"
+                                maxLength={50}
                             />
                         </View>
                         <View>
@@ -63,6 +97,7 @@ export default function RegistroScreen({ navigation }) {
                                 style={styles.input}
                                 onChangeText={(text) => setLogin(text)}
                                 placeholder="Digite o login"
+                                maxLength={30}
                             />
                         </View>
                         <View>
@@ -72,6 +107,7 @@ export default function RegistroScreen({ navigation }) {
                                 onChangeText={(text) => setSenha(text)}
                                 placeholder="Digite a senha"
                                 secureTextEntry
+                                maxLength={30}
                             />
                         </View>
                     </View>

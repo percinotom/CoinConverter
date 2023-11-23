@@ -152,6 +152,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  card: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  itensCard: {
+    backgroundColor: 'white',
+    paddingVertical: 30,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    borderColor: '#000',
+    borderWidth: 1
+  },
+  texto: {
+    fontSize: 22,
+  },
+  btnVoltar: {
+    backgroundColor: '#17A600',
+    borderRadius: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 25,
+    paddingRight: 25,
+    marginTop: 10,
+  },
+  centralizaBotoes: {
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

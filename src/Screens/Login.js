@@ -14,7 +14,30 @@ export default function LoginScreen({ navigation }) {
     setModalVisible(!isModalVisible);
   };
 
+  const validarCampos = () => {
+    if (!login || !senha) {
+        toggleModal('Todos os campos são obrigatórios.');
+        return false;
+    }
+
+    if (login.length < 3 || login.length > 30) {
+        toggleModal('O login deve ter entre 3 e 30 caracteres.');
+        return false;
+    }
+
+    if (senha.length < 3 || senha.length > 30) {
+        toggleModal('A senha deve ter entre 3 e 30 caracteres.');
+        return false;
+    }
+
+    return true;
+};
+
   const handleLogin = () => {
+    if (!validarCampos()) {
+      return;
+  }
+
     const data = {
       login: login,
       senha: senha,
@@ -67,7 +90,8 @@ export default function LoginScreen({ navigation }) {
                 style={styles.input}
                 onChangeText={(text) => setLogin(text)}
                 placeholder="Digite o login"
-                value={login} />
+                value={login}
+                maxLength={30} />
             </View>
             <View>
               <Text style={styles.texto}>Senha</Text>
@@ -76,7 +100,8 @@ export default function LoginScreen({ navigation }) {
                 secureTextEntry={true}
                 onChangeText={(text) => setSenha(text)}
                 placeholder="Digite a senha"
-                value={senha} />
+                value={senha}
+                maxLength={30} />
             </View>
             <TouchableOpacity
               style={styles.posicaoRegistrar}
@@ -183,7 +208,8 @@ const styles = StyleSheet.create({
   },
   itensCard: {
     backgroundColor: 'white',
-    padding: 30,
+    paddingVertical: 30,
+    paddingHorizontal: 15,
     borderRadius: 10,
     borderColor: '#000',
     borderWidth: 1

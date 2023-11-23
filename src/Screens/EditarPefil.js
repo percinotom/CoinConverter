@@ -15,7 +15,40 @@ export default function EditarPerfil({ navigation }) {
         setModalVisible(!isModalVisible);
     };
 
+    const validarCampos = () => {
+        if (!nome || !login || !senha) {
+            toggleModal('Todos os campos são obrigatórios.');
+            return false;
+        }
+
+        if (!/^[a-zA-Z]+$/.test(nome)) {
+            toggleModal('O campo de nome deve conter apenas letras.');
+            return false;
+        }
+
+        if (nome.length < 3 || nome.length > 50) {
+            toggleModal('O nome deve ter entre 3 e 50 caracteres.');
+            return false;
+        }
+
+        if (login.length < 3 || login.length > 30) {
+            toggleModal('O login deve ter entre 3 e 30 caracteres.');
+            return false;
+        }
+
+        if (senha.length < 3 || senha.length > 30) {
+            toggleModal('A senha deve ter entre 3 e 30 caracteres.');
+            return false;
+        }
+
+        return true;
+    };
+
     const salvarPerfil = () => {
+        if (!validarCampos()) {
+            return;
+        }
+
         const data = {
             id: user.id,
             nome: nome,
@@ -36,22 +69,25 @@ export default function EditarPerfil({ navigation }) {
                 if (response.status === 200) {
                     return response.json();
                 } else {
-                    throw new Error('Erro ao atualizar o perfil');
+                    toggleModal('Erro ao atualizar o perfil');
                 }
             })
             .then((responseData) => {
-                loginContext({
-                    ...user,
-                    nome: data.nome,
-                    login: data.login,
-                    senha: data.senha,
-                });
-                toggleModal('Perfil atualizado com sucesso!');
-                navigation.navigate('Tabs');
+                if (responseData.success) {
+                    loginContext({
+                        ...user,
+                        nome: data.nome,
+                        login: data.login,
+                        senha: data.senha,
+                    });
+                    toggleModal('Perfil atualizado com sucesso!');
+                    navigation.navigate('Tabs');
+                } else {
+                    toggleModal('Ocorreu um erro: ' + responseData.message);
+                }
             })
             .catch((error) => {
-                console.error('Erro ao atualizar o perfil:', error);
-                setMostrarMensagem('Erro ao atualizar o perfil: ' + error.message);
+                toggleModal('Ocorreu um erro: ' + error.sucess.message);
             });
     };
 
@@ -68,14 +104,16 @@ export default function EditarPerfil({ navigation }) {
                             <TextInput
                                 style={styles.input}
                                 onChangeText={(text) => setNome(text)}
-                                placeholder="Digite o nome" >{user.nome}</TextInput>
+                                placeholder="Digite o nome"
+                                maxLength={50} >{user.nome}</TextInput>
                         </View>
                         <View>
                             <Text style={styles.texto}>Login</Text>
                             <TextInput
                                 style={styles.input}
                                 onChangeText={(text) => setLogin(text)}
-                                placeholder="Digite o login" >{user.login}</TextInput>
+                                placeholder="Digite o login"
+                                maxLength={30} >{user.login}</TextInput>
                         </View>
                         <View>
                             <Text style={styles.texto}>Senha</Text>
@@ -83,7 +121,8 @@ export default function EditarPerfil({ navigation }) {
                                 style={styles.input}
                                 secureTextEntry={true}
                                 onChangeText={(text) => setSenha(text)}
-                                placeholder="Digite a senha" >{user.senha}</TextInput>
+                                placeholder="Digite a senha"
+                                maxLength={30} >{user.senha}</TextInput>
                         </View>
                     </View>
                     <TouchableOpacity style={styles.btnSalvar} onPress={salvarPerfil}>
@@ -184,7 +223,8 @@ const styles = StyleSheet.create({
     },
     itensCard: {
         backgroundColor: 'white',
-        padding: 30,
+        paddingVertical: 30,
+        paddingHorizontal: 15,
         borderRadius: 10,
         borderColor: '#000',
         borderWidth: 1
